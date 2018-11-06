@@ -14,7 +14,7 @@ describe('omdb service', function () {
     it('should return search movie data', function () {
         var response;
 
-        $httpBackend.whenGET("http://www.omdbapi.com/?v=1&s=margin%20call")
+        $httpBackend.whenGET("http://www.omdbapi.com/?v=1&s=margin%20call&apikey=d19563c3")
                           .respond(200, movieData);
 
         omdbApi.search('margin call')
@@ -29,7 +29,7 @@ describe('omdb service', function () {
     it('should return movie data by id', function () {
         var response;
 
-        $httpBackend.whenGET("http://www.omdbapi.com/?v=1&i=tt0076759")
+        $httpBackend.whenGET("http://www.omdbapi.com/?v=1&i=tt0076759&apikey=d19563c3")
                           .respond(200, movideDataById);
 
         omdbApi.find('tt0076759')
@@ -43,7 +43,7 @@ describe('omdb service', function () {
     it('should handle error', function() {
         var response;
 
-        $httpBackend.whenGET("http://www.omdbapi.com/?v=1&i=tt0076759")
+        $httpBackend.whenGET("http://www.omdbapi.com/?v=1&i=tt0076759&apikey=d19563c3")
                           .respond(500);
 
         omdbApi.find('tt0076759')
