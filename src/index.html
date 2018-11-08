@@ -19,7 +19,7 @@
       <div ng-controller="SearchController">
         <form class="form-inline-lg" ng-submit="search()">
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Film title..." ng-model="query">
+            <input type="text" class="form-control" placeholder="Film title..." ng-model="query" ng-keyup="keyup()" ng-keydown="keydown()">
             <span class="input-group-btn">
               <button class="btn btn-default" type="button" ng-click="search()">Go!</button>
             </span>
@@ -43,12 +43,15 @@
 
   <script type="text/javascript" src="https://code.angularjs.org/1.7.5/angular.min.js"></script>
   <script type="text/javascript" src="https://code.angularjs.org/1.7.5/angular-route.min.js"></script>
+  <script type="text/javascript" src="https://code.angularjs.org/1.7.5/angular-resource.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min.js"></script>  
   
   <script type="text/javascript" src="omdb/services.js"></script>
+  <script type="text/javascript" src="movie-core/service.js"></script>
   <script type="text/javascript" src="movie-app/app.js"></script>
   <script type="text/javascript" src="movie-app/search.controller.js"></script>
   <script type="text/javascript" src="movie-app/results.controller.js"></script>
+  <script type="text/javascript" src="movie-app/home.controller.js"></script>
 
 </body>
 </html>

@@ -11,11 +11,11 @@ angular.module('omdb', [])
             }
 
             service.search = function(query) {
-                return httpPromise(baseUrl += 's=' + encodeURIComponent(query) + apiKey);
+                return httpPromise(baseUrl + 's=' + encodeURIComponent(query) + apiKey);
             }
 
             service.find = function(id) {
-                return httpPromise(baseUrl += 'i=' + id + apiKey);
+                return httpPromise(baseUrl + 'i=' + id + apiKey);
             }
 
             return service;
