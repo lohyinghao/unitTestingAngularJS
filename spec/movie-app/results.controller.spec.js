@@ -27,16 +27,22 @@ describe('Results Controller', function() {
     var $q;
     var $rootScope;
     var $scope;
+    var $exceptionHandler;
 
     beforeEach(module('omdb'));
     beforeEach(module('movieApp'));
 
-    beforeEach(inject(function(_$controller_,_$location_,_$q_,_$rootScope_,_omdbApi_) {
+    beforeEach(module(function($exceptionHandlerProvider){
+        $exceptionHandlerProvider.mode('log');
+    }));
+
+    beforeEach(inject(function(_$controller_,_$location_,_$q_,_$rootScope_,_$exceptionHandler_,_omdbApi_) {
         $controller = _$controller_;
         $scope = {};
         $location = _$location_;
         $q = _$q_;
         $rootScope = _$rootScope_;
+        $exceptionHandler = _$exceptionHandler_;
         omdbApi = _omdbApi_;
     }));
 
@@ -58,12 +64,12 @@ describe('Results Controller', function() {
     it('should set result status to error', function() {
         spyOn(omdbApi, 'search').and.callFake(function() {
             var deferred = $q.defer();
-            deferred.reject();
+            deferred.reject('Something went wrong!');
             return deferred.promise;
         })
         $location.search('q','star wars');
         $controller('ResultsController', { $scope: $scope });
         $rootScope.$apply();
-        expect($scope.errorMessage).toBe('Something went wrong!');
-    })
+        expect($exceptionHandler.errors).toEqual(['Something went wrong!']);
+    });
 });

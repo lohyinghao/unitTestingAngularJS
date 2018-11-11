@@ -15,7 +15,7 @@ describe('Home Controller', function() {
         }
     ];
     var $scope;
-    var $interval;
+    var $interval;    
 
     beforeEach(module('movieApp'));
 
@@ -52,6 +52,7 @@ describe('Home Controller', function() {
             $interval: _$interval_,
             omdbApi: _omdbApi_,
             PopularMovies: _PopularMovies_
+
         });
         _$rootScope_.$apply();
     }));
