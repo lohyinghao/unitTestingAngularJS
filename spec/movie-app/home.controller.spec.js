@@ -14,17 +14,21 @@ describe('Home Controller', function() {
            "imdbID":"tt0086190"
         }
     ];
-    var $scope;
-    var $interval;    
+
+	var $scope;
+	var $interval;
+	var $q;
+	var $controller;
+	var $rootScope;
+	var omdbApi;
+	var PopularMovies;
+	var $exceptionHandler;
+	var $log;
 
     beforeEach(module('movieApp'));
 
-    beforeEach(inject(function(_$q_,_PopularMovies_) {
-        spyOn(_PopularMovies_, 'get').and.callFake(function() {
-            var deferred = _$q_.defer();
-            deferred.resolve(['tt0076759','tt0080684','tt0086190']);
-            return deferred.promise;
-        });
+    beforeEach(module(function($exceptionHandlerProvider) {
+	    $exceptionHandlerProvider.mode('log');
     }));
 
     beforeEach(inject(function(_$q_,_omdbApi_){
@@ -37,6 +41,8 @@ describe('Home Controller', function() {
                 deferred.resolve(results[1]);
             } else if (args === 'tt0086190'){
                 deferred.resolve(results[2]);
+            } else if(args === 'ttError') {
+                deferred.reject('error finding movie');
             } else {
                 deferred.reject();
             }
@@ -44,20 +50,32 @@ describe('Home Controller', function() {
         });
     }));
 
-    beforeEach(inject(function(_$controller_, _$interval_,_$rootScope_,_omdbApi_,_PopularMovies_){
-        $scope = {};
-        $interval = _$interval_;
-        _$controller_('HomeController', {
-            $scope: $scope,
-            $interval: _$interval_,
-            omdbApi: _omdbApi_,
-            PopularMovies: _PopularMovies_
-
-        });
-        _$rootScope_.$apply();
-    }));
+	beforeEach(inject(function(_$controller_, _$interval_, _$q_, _$exceptionHandler_, _$log_, _$rootScope_, _omdbApi_, _PopularMovies_) {
+		$scope = {};
+		$interval = _$interval_;
+		$q = _$q_;
+		$controller = _$controller_;
+		$rootScope = _$rootScope_;
+		$exceptionHandler = _$exceptionHandler_;
+		$log = _$log_;
+		omdbApi = _omdbApi_;
+		PopularMovies = _PopularMovies_;
+	}));
 
     it('should rotate movies every 5 seconds', function() {
+
+        spyOn(PopularMovies, 'query').and.callFake(function(callBack) {
+            callBack(['tt0076759','tt0080684','tt0086190']);
+        });
+
+        $controller('HomeController', { 
+			$scope: $scope,
+			$interval: $interval,
+			omdbApi: omdbApi,
+			PopularMovies: PopularMovies
+		});
+		$rootScope.$apply();
+
         expect($scope.result.Title).toBe(results[0].Title);
         $interval.flush(5000);
         expect($scope.result.Title).toBe(results[1].Title);
@@ -65,5 +83,30 @@ describe('Home Controller', function() {
         expect($scope.result.Title).toBe(results[2].Title);
         $interval.flush(5000);
         expect($scope.result.Title).toBe(results[0].Title);
-    })
+
+    });
+
+    it('should handle error', function() {
+
+        spyOn(PopularMovies, 'query').and.callFake(function(callBack) {
+            callBack(['tt0076759','tt0080684','tt0086190','ttError']);
+        });
+
+        $controller('HomeController', { 
+			$scope: $scope,
+			$interval: $interval,
+			omdbApi: omdbApi,
+			PopularMovies: PopularMovies
+		});
+		$rootScope.$apply();
+
+        expect($scope.result.Title).toBe(results[0].Title);
+        $interval.flush(5000);
+        expect($scope.result.Title).toBe(results[1].Title);
+        $interval.flush(5000);
+        expect($scope.result.Title).toBe(results[2].Title);
+        $interval.flush(5000);
+        
+        expect($exceptionHandler.errors).toEqual(['error finding movie']);
+    });
 })

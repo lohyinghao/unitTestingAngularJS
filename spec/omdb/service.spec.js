@@ -22,11 +22,13 @@ describe('omdb service', function () {
         
         $httpBackend.flush();
 
-        // dump(angular.mock.dump(response))
         expect(response).toEqual(movieData);
     });
 
     it('should return movie data by id', function () {
+        //to overcome angularjs-mock & router bugs
+        //$httpBackend.whenGET('movie-app/home.html').respond(200);
+
         var response;
 
         $httpBackend.whenGET("http://www.omdbapi.com/?v=1&i=tt0076759&apikey=d19563c3")
